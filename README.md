@@ -176,7 +176,7 @@ The LinkedIn post is generated separately — not just cross-posted — by re-re
 
 ```bash
 # 1. Clone
-git clone https://github.com/<your-username>/ai-news-curator.git
+git clone https://github.com/<K1ngBronxo>/ai-news-curator.git
 cd ai-news-curator
 
 # 2. In n8n: Workflows → Import from File
