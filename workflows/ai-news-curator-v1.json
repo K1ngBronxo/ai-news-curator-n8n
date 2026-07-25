@@ -1,0 +1,532 @@
+{
+  "name": "TELE-LINKEDIN",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "id": "d07b4be3-9c33-42d9-8928-ed759abe7168",
+      "name": "Schedule Trigger (Every 3 hrs)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.ycombinator.com/rss",
+        "options": {}
+      },
+      "id": "86782e8c-1b63-4c45-8036-bd9ff413ed44",
+      "name": "Fetch HackerNews RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "d8073a96-d261-45ce-8668-11f256b89b18",
+      "name": "Merge RSS Feeds",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        32,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Taxonomies for the 5 strategic domains\nconst taxonomy = {\n  aiTools: [\n    \"generative ai\", \"genai\", \"large language model\", \"llm\", \"agentic ai\", \n    \"chatgpt\", \"google gemini\", \"github copilot\", \"replit\", \"lovable\", \n    \"relay.app\", \"openclaw\", \"ai agent\", \"ai agents\"\n  ],\n  aiHacks: [\n    \"jailbreak\", \"prompt injection\", \"prompt smuggling\", \"hallusquatting\", \n    \"seo poisoning\", \"hexstrike\", \"zero-click\", \"jit exploit\", \"data poisoning\", \n    \"infostealer\", \"lumma\", \"vidar\", \"mcp exploit\", \"mcp exploits\"\n  ],\n  trendingAiSeo: [\n    \"ai overview\", \"aio\", \"generative engine optimization\", \"geo\", \n    \"search generative experience\", \"sge\", \"semantic search\", \"topical authority\", \n    \"entity authority\", \"conversational search\", \"ai content detection\", \n    \"algorithm update\", \"data void\"\n  ],\n  linkedinVibeCoding: [\n    \"vibe coding\", \"ai-assisted development\", \"natural language programming\", \n    \"automated code generation\", \"ai skill verification\", \"dynamic skill badge\", \n    \"talent acquisition ai\", \"ai-generated linkedin content\", \"thought leadership\"\n  ],\n  coreSecurity: [\n    \"autonomous penetration testing\", \"attack path management\", \"zero-trust\", \n    \"machine-speed attack\", \"soar\", \"ai supply chain attack\", \n    \"adversarial hallucination\", \"social engineering\", \"data exfiltration\"\n  ]\n};\n\nconst allKeywords = Object.values(taxonomy).flat();\nconst items = $input.all();\nconst filtered = [];\nconst seenTitles = new Set();\n\nfor (const item of items) {\n  const json = item.json;\n  const title = (json.title || '').trim();\n  const desc = (json.contentSnippet || json.content || json.description || '').toLowerCase();\n  const searchStr = (title + ' ' + desc).toLowerCase();\n  \n  if (seenTitles.has(title.toLowerCase())) continue;\n  \n  const matched = allKeywords.filter(k => searchStr.includes(k));\n  if (matched.length > 0) {\n    seenTitles.add(title.toLowerCase());\n    \n    // Image URL extraction subroutine\n    let imageUrl = json.imageUrl || null;\n    if (!imageUrl && (json.content || json.description)) {\n      const imgMatch = (json.content || json.description).match(/<img[^>]+src=[\"']([^\"']+)[\"']/i);\n      if (imgMatch) imageUrl = imgMatch[1];\n    }\n    \n    filtered.push({\n      json: {\n        title: title,\n        link: json.link,\n        pubDate: json.pubDate,\n        summary: json.contentSnippet || json.description,\n        matchedKeywords: matched,\n        matchScore: matched.length,\n        imageUrl: imageUrl\n      }\n    });\n  }\n}\n\nif (filtered.length === 0) return [];\n\nfiltered.sort((a, b) => b.json.matchScore - a.json.matchScore);\n\nconst rotationBucket = Math.floor(Date.now() / (1000 * 60 * 60 * 3)) % filtered.length;\nconst chosen = filtered[rotationBucket];\n\nreturn [chosen];"
+      },
+      "id": "c9db05d0-d165-42ce-b353-c3eb0fa70535",
+      "name": "Phase 1: NLP 5-Domain Taxonomy Filter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert AI curator for Telegram channel 'The Social News'. Create a high-signal, publication-ready news briefing with emojis.\n\nTitle: {{ $json.title }}\nSummary: {{ $json.summary }}\nLink: {{ $json.link }}\nMatched Keywords: {{ $json.matchedKeywords.join(', ') }}\n\nFormatting:\n1. Catchy headline with emojis\n2. 3 key takeaway bullet points\n3. Short 'Why It Matters' section\n4. Relevant hashtags\n5. Include link at bottom.",
+        "batching": {}
+      },
+      "id": "13af97a6-d4c4-4bb5-969e-b050893004c5",
+      "name": "Phase 2: Gemini AI Engine #1 (Telegram Post)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        480,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "id": "919f7a58-42b9-429b-96bf-6a5eb57f68a2",
+      "name": "Phase 2: Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        432
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "D2KERQsHSGT06zVR",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst response = item.json;\nlet text = '';\nif (response.candidates && response.candidates[0] && response.candidates[0].content) {\n  text = response.candidates[0].content.parts[0].text;\n} else {\n  text = response.text || 'Latest Update from The Social News';\n}\n\nconst prevData = $(\"Phase 1: NLP 5-Domain Taxonomy Filter\").first().json;\n\nreturn {\n  json: {\n    telegramPostText: text,\n    imageUrl: prevData.imageUrl,\n    articleLink: prevData.link,\n    title: prevData.title\n  }\n};"
+      },
+      "id": "c5f266ff-9a16-4c80-a962-64e9468ce577",
+      "name": "Phase 3: Telegram Payload & Image Formatter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "@BRONXOSOCIAL",
+        "text": "={{ $json.telegramPostText }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "9077a1a0-2458-4c79-a77a-4de56edf28d1",
+      "name": "Phase 4: Broadcast to 'The Social News' Channel",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        208
+      ],
+      "webhookId": "e8ed10df-0e0c-4582-8ac6-88ddabc759b1",
+      "credentials": {
+        "telegramApi": {
+          "id": "k9FfiFF97HzSzYZO",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "id": "dd3e5b49-7ea1-48d2-bfcc-3b32c71b54d3",
+      "name": "Fetch TechCrunch AI RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.feedburner.com/TheHackersNews",
+        "options": {}
+      },
+      "id": "5abc9bed-3637-40e9-b536-8ce8cb969bfd",
+      "name": "Fetch CyberSecurity News RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "channel_post",
+          "message",
+          "callback_query",
+          "edited_channel_post",
+          "inline_query",
+          "edited_message",
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "id": "a44b8535-e749-40ed-9f06-f2924a1a6f5d",
+      "name": "Phase 5: Secondary Bot Listener (Telegram Channel)",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -416,
+        736
+      ],
+      "webhookId": "68ae6909-021e-4815-8bdb-932ff6cba515",
+      "executeOnce": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "0NSuQl8wJYCRmuzg",
+          "name": "Telegram account 4"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "b878b1d9-a0cd-4a09-808e-0fdc88c2ecd6",
+      "name": "Phase 5: 10-Second Post-Publication Delay Trigger",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        736
+      ],
+      "webhookId": "8fc00880-4fcb-4d1a-a96a-d058af54d19b"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst message = item.channel_post || item.message || {};\nconst text = message.text || message.caption || '';\nlet imageUrl = null;\n\nif (message.photo && message.photo.length > 0) {\n  const largestPhoto = message.photo[message.photo.length - 1];\n  imageUrl = largestPhoto.file_id;\n}\n\nreturn {\n  json: {\n    telegramMessageText: text,\n    originalMessageId: message.message_id,\n    imageUrl: imageUrl\n  }\n};\n"
+      },
+      "id": "2341e5f3-13ec-48da-ad84-b890b7984c7d",
+      "name": "Phase 5: Scrape Channel Message & Media",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are the executive personal brand ghostwriter for K1NG BRONXO. Rewrite the following Telegram news broadcast into a viral, professional LinkedIn thought leadership post.\n\nRaw Telegram Post:\n{{ $json.telegramMessageText }}\n\nLinkedIn Guidelines:\n1. Bold, high-hook opening line.\n2. Short 1-2 sentence paragraphs with generous spacing.\n3. Key takeaways for AI & Tech leaders.\n4. High-engagement question to provoke discussion.\n5. 3-5 relevant hashtags.\n6. DO NOT include sign-off signature (it will be appended automatically).",
+        "batching": {}
+      },
+      "id": "d412f70d-f95b-418b-be7d-80fd87af7acb",
+      "name": "Phase 5: AI Engine #2 (LinkedIn Optimization)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        256,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "id": "3e14f68d-a550-4aaa-9390-4ef6014d1a13",
+      "name": "Phase 5: Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        960
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "D2KERQsHSGT06zVR",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst response = item.json;\nlet text = '';\nif (response.candidates && response.candidates[0] && response.candidates[0].content) {\n  text = response.candidates[0].content.parts[0].text;\n} else {\n  text = response.text || '';\n}\n\nconst prevData = $(\"Phase 5: Scrape Channel Message & Media\").first().json;\nconst signature = `\n\n                              — K1NG BRONXO`;\nconst finalText = text.trim() + signature;\n\nreturn {\n  json: {\n    linkedinPostText: finalText,\n    imageUrl: prevData.imageUrl,\n    brandSignature: '— K1NG BRONXO'\n  }\n};\n"
+      },
+      "id": "70068c4f-a7fe-43c8-af33-51c21e657343",
+      "name": "Phase 5: Brand Signature & Watermark Appender",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "person": "YOUR_LINKEDIN_PERSON_URN",
+        "text": "={{ $json.linkedinPostText }}",
+        "additionalFields": {}
+      },
+      "id": "1db521d6-b5c8-48fb-9b05-0333034ddd21",
+      "name": "Phase 5: Publish to LinkedIn (K1NG BRONXO)",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        832,
+        736
+      ],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "wq1buMsgysFcmMQ2",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        496
+      ],
+      "id": "66ab52bc-3d27-43b3-acd9-8e56d42933f7",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {
+    "Phase 5: Secondary Bot Listener (Telegram Channel)": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger (Every 3 hrs)": {
+      "main": [
+        [
+          {
+            "node": "Fetch HackerNews RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch TechCrunch AI RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch CyberSecurity News RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch HackerNews RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 1: NLP 5-Domain Taxonomy Filter": {
+      "main": [
+        [
+          {
+            "node": "Phase 2: Gemini AI Engine #1 (Telegram Post)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 2: Gemini AI Engine #1 (Telegram Post)": {
+      "main": [
+        [
+          {
+            "node": "Phase 3: Telegram Payload & Image Formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 2: Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Phase 2: Gemini AI Engine #1 (Telegram Post)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 3: Telegram Payload & Image Formatter": {
+      "main": [
+        [
+          {
+            "node": "Phase 4: Broadcast to 'The Social News' Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch TechCrunch AI RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Fetch CyberSecurity News RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge RSS Feeds": {
+      "main": [
+        [
+          {
+            "node": "Phase 1: NLP 5-Domain Taxonomy Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 5: Secondary Bot Listener (Telegram Channel)": {
+      "main": [
+        [
+          {
+            "node": "Phase 5: 10-Second Post-Publication Delay Trigger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 5: 10-Second Post-Publication Delay Trigger": {
+      "main": [
+        [
+          {
+            "node": "Phase 5: Scrape Channel Message & Media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 5: Scrape Channel Message & Media": {
+      "main": [
+        [
+          {
+            "node": "Phase 5: AI Engine #2 (LinkedIn Optimization)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 5: AI Engine #2 (LinkedIn Optimization)": {
+      "main": [
+        [
+          {
+            "node": "Phase 5: Brand Signature & Watermark Appender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 5: Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Phase 5: AI Engine #2 (LinkedIn Optimization)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phase 5: Brand Signature & Watermark Appender": {
+      "main": [
+        [
+          {
+            "node": "Phase 5: Publish to LinkedIn (K1NG BRONXO)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Fetch CyberSecurity News RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch TechCrunch AI RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch HackerNews RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "6074ace8-9718-49ee-a8dc-936f4ff95158",
+  "meta": {
+    "instanceId": "7576c99483e4a6bcab9aea6919dffa11ffb974f555a4aafe5f72b29a2133014a"
+  },
+  "nodeGroups": [],
+  "id": "NUwc8UEuR6ta6AEv",
+  "tags": []
+}

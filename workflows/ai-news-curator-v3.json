@@ -1,1 +1,1952 @@
-
+{
+  "name": "AI News Curator V3: Intelligence + Research Fallback + Multi-Platform",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## AI News Curator V3\n\n🧠 AI gate + next-candidate retry\n🔬 Research fallback (HN Algolia)\n📊 Enrichment: sentiment, entities, credibility\n🎯 A/B headline pick\n♻️ Repurpose: X thread, Discord, newsletter\n📈 Analytics in workflow static data\n🚨 Breaking priority flag\n\nPlaceholders: @YOUR_TELEGRAM_CHANNEL, YOUR_LINKEDIN_PERSON_URN, YOUR_DISCORD_WEBHOOK_URL",
+        "height": 484,
+        "width": 440,
+        "color": 5
+      },
+      "id": "1b6234df-fa8c-4fd0-9d33-cd45d85a5e3b",
+      "name": "Sticky Note: V3 Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3520,
+        -656
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🔬 Research Fallback\nIf AI rejects all RSS picks:\n1) Fetch live HN Algolia signals\n2) AI picks best story\n3) Enrich + post anyway\n\nAlso runs when zero RSS matches.",
+        "height": 296,
+        "width": 300,
+        "color": 7
+      },
+      "id": "db697395-c982-42b5-85be-a4ddc3b0be5e",
+      "name": "Sticky Note: Research Fallback",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1456,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "id": "90f7eda4-d941-4a90-b4ca-401b1d3dbc9f",
+      "name": "Schedule Trigger (Every 3 hrs)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3040,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.ycombinator.com/rss",
+        "options": {}
+      },
+      "id": "b5dd78e0-cc21-41ea-8eef-5a009d12ae7a",
+      "name": "Fetch HackerNews RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "id": "c1b18134-e593-4845-9e4a-2bf7ede50879",
+      "name": "Fetch TechCrunch AI RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        -672
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.feedburner.com/TheHackersNews",
+        "options": {}
+      },
+      "id": "13cd4edb-9a6c-4b55-bd3c-4a30243e43b8",
+      "name": "Fetch TheHackersNews RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        -480
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.technologyreview.com/feed/",
+        "options": {}
+      },
+      "id": "98605dd9-b47a-4207-86ea-18320b2f7632",
+      "name": "Fetch MIT Tech Review RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.arstechnica.com/arstechnica/technology-lab",
+        "options": {}
+      },
+      "id": "e294aabe-27b9-4a9a-9c3f-3d04738898bb",
+      "name": "Fetch Ars Technica RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://venturebeat.com/category/ai/feed/",
+        "options": {}
+      },
+      "id": "66715f5c-ff48-422e-9e11-39c5034cafcf",
+      "name": "Fetch VentureBeat AI RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/rss/index.xml",
+        "options": {}
+      },
+      "id": "3898dd59-e089-43e5-a0f9-6b78578dcbc1",
+      "name": "Fetch The Verge RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://openai.com/blog/rss.xml",
+        "options": {}
+      },
+      "id": "c6aad5f2-c1ec-40ad-8401-9cb9af1cdc83",
+      "name": "Fetch OpenAI Blog RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.wired.com/feed/rss",
+        "options": {}
+      },
+      "id": "ab1fc8c1-6b46-4b9b-bb67-1a7e921ef601",
+      "name": "Fetch Wired RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 9
+      },
+      "id": "4bb93666-aea9-4403-8270-e76f23097206",
+      "name": "Merge RSS Feeds",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -2592,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// V3 Intelligence Engine\nconst SOURCE_WEIGHTS = {\n  'techcrunch.com': 92, 'thehackernews.com': 90, 'arstechnica.com': 88,\n  'technologyreview.com': 91, 'venturebeat.com': 86, 'theverge.com': 84,\n  'news.ycombinator.com': 78, 'openai.com': 93, 'blog.google': 92, 'wired.com': 87, 'default': 70\n};\nconst taxonomy = {\n  aiTools: ['generative ai','genai','llm','agentic ai','chatgpt','gemini','copilot','openai','anthropic','claude'],\n  aiHacks: ['jailbreak','prompt injection','ransomware','breach','cve','malware','phishing','zero-click','deepfake'],\n  trendingAiSeo: ['ai overview','geo','semantic search','algorithm update','search generative experience'],\n  devNews: ['vibe coding','developer tools','open source','framework','api','sdk','programming','github'],\n  coreSecurity: ['zero-trust','soar','penetration testing','cyber attack','vulnerability','encryption','incident']\n};\nconst SKIP_PATTERNS = [/sponsored/i,/advertisement/i,/partner content/i,/opinion:/i,/editorial:/i,/you won't believe/i,/shocking/i];\nconst CLICKBAIT = [/you won't believe/i,/shocking/i,/this one trick/i,/what happens next/i,/goes viral/i];\n\nfunction norm(s='') { return s.toLowerCase().replace(/\\s+/g,' ').trim(); }\nfunction host(url='') { try { return new URL(url).hostname.replace(/^www\\./,''); } catch { return 'default'; } }\nfunction hoursSince(dateStr) {\n  const d = new Date(dateStr); if (isNaN(d)) return 999;\n  return (Date.now() - d.getTime()) / 3600000;\n}\nfunction detectCategory(text, matched) {\n  const scores = {};\n  for (const [cat, words] of Object.entries(taxonomy)) {\n    scores[cat] = words.filter(w => text.includes(w)).length + matched.filter(m => taxonomy[cat].includes(m)).length * 2;\n  }\n  const best = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];\n  return best && best[1] > 0 ? best[0] : 'aiTools';\n}\nfunction titleSimilarity(a, b) {\n  const wa = new Set(norm(a).split(' ').filter(w=>w.length>3));\n  const wb = new Set(norm(b).split(' ').filter(w=>w.length>3));\n  if (!wa.size || !wb.size) return 0;\n  let inter = 0; wa.forEach(w => { if (wb.has(w)) inter++; });\n  return inter / Math.max(wa.size, wb.size);\n}\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.postedUrls) staticData.postedUrls = [];\nif (!staticData.postedTitles) staticData.postedTitles = [];\nif (!staticData.analytics) staticData.analytics = [];\n\nconst allKeywords = Object.values(taxonomy).flat();\nconst items = $input.all();\nconst candidates = [];\nconst seenUrls = new Set();\nconst seenTitles = [];\n\nfor (const item of items) {\n  const j = item.json;\n  const title = (j.title || '').trim();\n  const link = (j.link || j.url || '').trim();\n  const summary = (j.contentSnippet || j.description || j.content || '').replace(/<[^>]+>/g,' ').trim();\n  const searchStr = norm(title + ' ' + summary);\n  if (!title || !link || summary.length < 80) continue;\n  if (hoursSince(j.pubDate || j.isoDate || j.published) > 72) continue;\n  if (SKIP_PATTERNS.some(p => p.test(title) || p.test(summary))) continue;\n  if (staticData.postedUrls.includes(link)) continue;\n  let dup = false;\n  for (const t of seenTitles) { if (titleSimilarity(title, t) > 0.65) { dup = true; break; } }\n  if (!dup) for (const t of staticData.postedTitles.slice(-40)) { if (titleSimilarity(title, t) > 0.65) { dup = true; break; } }\n  if (dup || seenUrls.has(link)) continue;\n  seenUrls.add(link); seenTitles.push(title);\n  const matched = allKeywords.filter(k => searchStr.includes(k));\n  if (!matched.length) continue;\n\n  const h = host(link);\n  const sourceKey = Object.keys(SOURCE_WEIGHTS).find(k => h.includes(k)) || 'default';\n  const sourceTrust = SOURCE_WEIGHTS[sourceKey];\n  const freshness = Math.max(0, 100 - hoursSince(j.pubDate || j.isoDate) * 3);\n  const relevance = Math.min(100, matched.length * 14 + (searchStr.includes('ai') ? 10 : 0));\n  const aiImpact = Math.min(100, matched.filter(k => taxonomy.aiTools.concat(taxonomy.trendingAiSeo).includes(k)).length * 18);\n  const cyberImpact = Math.min(100, matched.filter(k => taxonomy.aiHacks.concat(taxonomy.coreSecurity).includes(k)).length * 20);\n  const engagement = Math.min(100, (CLICKBAIT.some(p=>p.test(title)) ? 20 : 75) + (title.length < 90 ? 10 : 0));\n  const uniqueness = Math.min(100, 85 + Math.min(15, matched.length * 2));\n  const hours = hoursSince(j.pubDate || j.isoDate);\n  const velocity = Math.min(100, Math.max(20, 100 - hours * 8));\n  const breaking = hours < 6 && (/breaking|just in|emergency|alert/i.test(searchStr));\n\n  const totalScore = relevance*0.2 + freshness*0.16 + sourceTrust*0.14 + aiImpact*0.13 + cyberImpact*0.12 + engagement*0.1 + uniqueness*0.07 + velocity*0.08 + (breaking ? 15 : 0);\n\n  let imageUrl = j.imageUrl || j.enclosure?.url || null;\n  if (!imageUrl && j.enclosure?.type?.startsWith('image')) imageUrl = j.enclosure.url;\n  if (!imageUrl && (j.content || j.description)) {\n    const m = String(j.content || j.description).match(/<img[^>]+src=[\\\"']([^\\\"']+)[\\\"']/i);\n    if (m) imageUrl = m[1];\n  }\n\n  candidates.push({\n    title, link, pubDate: j.pubDate || j.isoDate || j.published || '',\n    summary: summary.slice(0, 900), matchedKeywords: matched, category: detectCategory(searchStr, matched),\n    imageUrl, source: h, sourceTrust, breaking, isClickbait: CLICKBAIT.some(p=>p.test(title)),\n    scores: { relevance, freshness, sourceTrust, aiImpact, cyberImpact, engagement, uniqueness, velocity, total: Math.round(totalScore*10)/10 }\n  });\n}\n\nif (!candidates.length) {\n  return [{ json: { found: false, reason: 'No qualifying RSS articles', triggerResearch: true, candidates: [], candidateIndex: 0 } }];\n}\n\nconst categories = [...new Set(candidates.map(c => c.category))];\nconst rotationIndex = Math.floor(Date.now() / (1000*60*60*3)) % Math.max(categories.length, 1);\nconst preferredCategory = categories[rotationIndex] || categories[0];\nconst ranked = candidates\n  .map(c => ({ ...c, totalScore: c.scores.total + (c.category === preferredCategory ? 8 : 0) - (c.isClickbait ? 25 : 0) }))\n  .sort((a,b) => b.totalScore - a.totalScore);\nconst top = ranked.slice(0, 5);\n\nreturn [{ json: {\n  found: true, preferredCategory, candidates: top, winner: top[0], candidateIndex: 0,\n  rejectedTitles: [], sourceMode: 'rss', triggerResearch: false,\n  priority: top[0].breaking ? 'breaking' : 'scheduled'\n}}];\n"
+      },
+      "id": "6f5a2920-4f26-4a0a-8107-6ccfacfb44d8",
+      "name": "V3: Smart Filter Score & Rank",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2368,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7d902531-b224-4437-99e6-af150b27b0b2",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7af5cdcd-c56a-477a-a796-0edffeed8e9b",
+      "name": "V3: Any Article Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2144,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nif (item.winner && Array.isArray(item.candidates)) return [{ json: item }];\nconst fromFilter = $('V3: Smart Filter Score & Rank').first()?.json;\nreturn [{ json: fromFilter || item }];\n"
+      },
+      "id": "5fc53ce1-3a5d-422f-8400-aef7fa452f44",
+      "name": "V3: Sync Candidate Envelope",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1920,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Senior editor gate. Return ONLY JSON:\n{\"worthPosting\":bool,\"confidence\":0-100,\"reason\":\"\",\"breakingNews\":bool,\"clickbaitRisk\":\"low|medium|high\",\"factCheck\":\"verified|likely|unclear|weak\"}\n\nReject: sponsored, opinion-only, fluff, clickbait, weak sources.\nApprove: high impact for AI, dev, or security audiences.\n\nTitle: {{ $json.winner.title }}\nSource: {{ $json.winner.source }}\nCategory: {{ $json.winner.category }}\nScore: {{ $json.winner.totalScore }}\nSummary: {{ $json.winner.summary }}\nLink: {{ $json.winner.link }}\nPreviously rejected: {{ $json.rejectedTitles.join('; ') || 'none' }}",
+        "batching": {}
+      },
+      "id": "1ab3340f-6910-422b-bda1-f37dc8b41c07",
+      "name": "V3: AI Story Worthiness Gate",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -1696,
+        -368
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "id": "b99d7cf5-96dd-4f5f-86f2-a6c3c1088b61",
+      "name": "V3: Gemini Model (AI Gate)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -1616,
+        -144
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "bCjsG5Pw0CgYOWsl",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nlet raw = resp.text || resp.output || '';\nif (resp.candidates?.[0]?.content?.parts?.[0]?.text) raw = resp.candidates[0].content.parts[0].text;\nlet parsed = { worthPosting: true, confidence: 75, reason: 'Passed', breakingNews: false, clickbaitRisk: 'low', factCheck: 'unclear' };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); if (m) parsed = { ...parsed, ...JSON.parse(m[0]) }; } catch (e) {}\n\nconst envelope = $('V3: Sync Candidate Envelope').first().json;\nconst winner = envelope.winner;\nconst approved = parsed.worthPosting !== false && parsed.clickbaitRisk !== 'high' && parsed.confidence >= 55;\n\nreturn [{ json: {\n  ...winner, aiGate: parsed, approved,\n  envelope: { ...envelope, rejectedTitles: envelope.rejectedTitles || [] },\n  sourceMode: envelope.sourceMode || 'rss', priority: envelope.priority || 'scheduled'\n}}];\n"
+      },
+      "id": "aacdf28b-0183-4ec9-aebb-2fe808ab5280",
+      "name": "V3: Parse AI Gate Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1344,
+        -368
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9e4b55f6-ce60-4f36-b482-2deb3e0c0138",
+              "leftValue": "={{ $json.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4fcf4d36-152d-475f-97e5-8a97e643657e",
+      "name": "V3: Worth Posting?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1120,
+        -368
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $input.first().json;\nconst env = j.envelope || {};\nconst candidates = env.candidates || [];\nlet idx = env.candidateIndex ?? 0;\nconst rejectedTitles = [...(env.rejectedTitles || []), j.title].filter(Boolean);\n\nif (env.sourceMode === 'rss' && idx < candidates.length - 1) {\n  const nextIdx = idx + 1;\n  return [{ json: {\n    found: true, candidates, candidateIndex: nextIdx, winner: candidates[nextIdx],\n    preferredCategory: env.preferredCategory, rejectedTitles, sourceMode: 'rss',\n    fallbackAction: 'try_next_candidate', lastRejectionReason: j.aiGate?.reason || 'rejected',\n    priority: candidates[nextIdx]?.breaking ? 'breaking' : env.priority\n  }}];\n}\n\nreturn [{ json: {\n  found: false, triggerResearch: true, fallbackAction: 'research',\n  rejectedTitles, lastRejectionReason: j.aiGate?.reason || 'all candidates rejected',\n  preferredCategory: env.preferredCategory || 'aiTools'\n}}];\n"
+      },
+      "id": "aaeba9ae-2ad6-4765-a76b-9e03ae3df9d1",
+      "name": "V3: Fallback Router",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -896,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "def9e051-aa5a-4dd0-933c-f378f109710d",
+              "leftValue": "={{ $json.fallbackAction }}",
+              "rightValue": "try_next_candidate",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b34199e9-6d6f-46cc-991a-989c476c5cdd",
+      "name": "V3: Fallback Action?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://hn.algolia.com/api/v1/search?query=AI%20OR%20LLM%20OR%20cybersecurity%20OR%20agents&tags=story&hitsPerPage=12",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "8fb50f9d-5e15-4ff1-9647-f2da6defe145",
+      "name": "V3: Fetch Live Research (HN Algolia)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -448,
+        112
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst hits = data.hits || [];\nconst filter = $('V3: Smart Filter Score & Rank').first()?.json || {};\nconst fallback = $('V3: Fallback Router').first()?.json || {};\nconst rejected = fallback.rejectedTitles || filter.rejectedTitles || [];\nconst items = hits.slice(0, 12).map(h => ({\n  title: h.title || h.story_title || '',\n  link: h.url || h.story_url || '',\n  summary: (h.story_text || h.comment_text || '').slice(0, 500),\n  points: h.points || 0,\n  source: 'news.ycombinator.com',\n  ageHours: h.created_at_i ? (Date.now()/1000 - h.created_at_i)/3600 : 999\n})).filter(x => x.title && x.link && x.ageHours < 48);\n\nreturn [{ json: {\n  researchItems: items,\n  rejectedTitles: rejected,\n  researchQuery: 'AI security LLM agents developer news',\n  itemCount: items.length\n}}];\n"
+      },
+      "id": "d534d48a-438a-4d51-8676-bbc20ed6b867",
+      "name": "V3: Format Research Corpus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a research curator. Pick ONE high-signal story to publish today from the corpus.\nReturn ONLY JSON:\n{\"worthPosting\":true,\"confidence\":0-100,\"title\":\"\",\"link\":\"\",\"summary\":\"\",\"category\":\"aiTools|aiHacks|devNews|coreSecurity|trendingAiSeo\",\"keywords\":[\"\"],\"source\":\"\",\"breaking\":false,\"reason\":\"\"}\n\nMust be factual, recent, and valuable for AI/dev/security audience.\nDo NOT repeat rejected titles: {{ $json.rejectedTitles.join('; ') || 'none' }}\n\nCorpus (JSON): {{ JSON.stringify($json.researchItems).slice(0, 12000) }}",
+        "batching": {}
+      },
+      "id": "24d6366e-fb2f-482d-9841-1606eb20ff26",
+      "name": "V3: AI Research Curator",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        16,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-flash-latest",
+        "options": {}
+      },
+      "id": "1d1aa92b-51a2-4140-bc86-209bc9d394cb",
+      "name": "V3: Gemini Model (Research)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        336
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "bCjsG5Pw0CgYOWsl",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nlet raw = resp.text || resp.output || '';\nif (resp.candidates?.[0]?.content?.parts?.[0]?.text) raw = resp.candidates[0].content.parts[0].text;\n\nlet pick = { worthPosting: false, confidence: 0, reason: 'No story selected' };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); if (m) pick = JSON.parse(m[0]); } catch (e) {}\n\nconst corpus = $('V3: Format Research Corpus').first().json;\nconst approved = pick.worthPosting === true && (pick.confidence ?? 0) >= 60;\n\nconst winner = {\n  title: pick.title || 'Research Brief',\n  link: pick.link || '',\n  summary: pick.summary || pick.reason || '',\n  category: pick.category || corpus.preferredCategory || 'aiTools',\n  matchedKeywords: pick.keywords || ['ai','research'],\n  source: pick.source || 'research.curator',\n  imageUrl: pick.imageUrl || null,\n  breaking: !!pick.breaking,\n  totalScore: pick.confidence || 70,\n  scores: { total: pick.confidence || 70 },\n  sourceTrust: 75\n};\n\nreturn [{ json: {\n  found: approved, approved, winner,\n  candidates: [winner], candidateIndex: 0,\n  sourceMode: 'research', rejectedTitles: corpus.rejectedTitles || [],\n  aiGate: { worthPosting: approved, confidence: pick.confidence, reason: pick.reason, clickbaitRisk: 'low' },\n  priority: pick.breaking ? 'breaking' : 'scheduled',\n  triggerResearch: false,\n  enrichmentSeed: pick\n}}];\n"
+      },
+      "id": "89f090bd-1953-4725-bb72-d57159af925b",
+      "name": "V3: Parse Research Pick",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e2c1b052-65bd-40dd-ab42-a690de385d68",
+              "leftValue": "={{ $json.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d9c42cb6-b530-4da7-96e1-7afbca98567c",
+      "name": "V3: Research Found Story?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { status: 'skipped', reason: 'RSS empty/rejected and research fallback found nothing post-worthy', at: new Date().toISOString() } }];"
+      },
+      "id": "d1473ea9-ab23-44ae-a8c1-ad72d09791ec",
+      "name": "V3: Log Research Failed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze story and return ONLY JSON:\n{\"sentiment\":\"positive|neutral|negative|mixed\",\"audienceSegment\":\"developers|executives|security|mixed\",\"entities\":[\"Company/Person\"],\"credibilityScore\":0-100,\"keyQuote\":\"\",\"factCheckNote\":\"\",\"headlineA\":\"\",\"headlineB\":\"\",\"bestHeadline\":\"\"}\n\nPick bestHeadline as sharper hook (no markdown).\n\nTitle: {{ $json.title }}\nSummary: {{ $json.summary }}\nSource: {{ $json.source }}\nLink: {{ $json.link }}",
+        "batching": {}
+      },
+      "id": "eccc7b59-f91d-4beb-9312-d140bdff72a8",
+      "name": "V3: Content Enrichment Engine",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        816,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "id": "b64e0d6a-c867-4773-9733-a381f76cc49c",
+      "name": "V3: Gemini Model (Enrichment)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        -320
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "eRM7OdntFXxSwBy9",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nlet raw = resp.text || resp.output || '';\nif (resp.candidates?.[0]?.content?.parts?.[0]?.text) raw = resp.candidates[0].content.parts[0].text;\nlet e = { sentiment: 'neutral', audienceSegment: 'mixed', entities: [], credibilityScore: 70, keyQuote: '', factCheckNote: '', headlineA: '', headlineB: '', bestHeadline: '' };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); if (m) e = { ...e, ...JSON.parse(m[0]) }; } catch (err) {}\n\nconst article = $('V3: Parse AI Gate Response').first().json;\nconst headline = e.bestHeadline || e.headlineA || article.title;\nreturn [{ json: { ...article, title: headline, enrichment: e, audienceSegment: e.audienceSegment || 'mixed' } }];\n"
+      },
+      "id": "f6dae278-411e-4262-8c98-8f3949aaf599",
+      "name": "V3: Parse Enrichment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        -448
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze researched story. Return ONLY JSON:\n{\"sentiment\":\"positive|neutral|negative|mixed\",\"audienceSegment\":\"developers|executives|security|mixed\",\"entities\":[],\"credibilityScore\":0-100,\"keyQuote\":\"\",\"factCheckNote\":\"\",\"headlineA\":\"\",\"headlineB\":\"\",\"bestHeadline\":\"\"}\n\nTitle: {{ $json.winner.title }}\nSummary: {{ $json.winner.summary }}\nLink: {{ $json.winner.link }}",
+        "batching": {}
+      },
+      "id": "68de085d-030f-420a-b297-a53b1bfa84d4",
+      "name": "V3: Research Enrichment Engine",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        816,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite-preview",
+        "options": {}
+      },
+      "id": "186521df-9030-4135-b9bb-7f527831a19e",
+      "name": "V3: Gemini Model (Research Enrich)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        80
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "D2KERQsHSGT06zVR",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nlet raw = resp.text || resp.output || '';\nif (resp.candidates?.[0]?.content?.parts?.[0]?.text) raw = resp.candidates[0].content.parts[0].text;\nlet e = { sentiment: 'neutral', audienceSegment: 'mixed', entities: [], credibilityScore: 70, keyQuote: '', factCheckNote: '', headlineA: '', headlineB: '', bestHeadline: '' };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); if (m) e = { ...e, ...JSON.parse(m[0]) }; } catch (err) {}\n\nconst article = $('V3: Parse Research Pick').first().json;\nconst w = article.winner || article;\nconst headline = e.bestHeadline || e.headlineA || w.title;\nreturn [{ json: { ...w, title: headline, enrichment: e, audienceSegment: e.audienceSegment || 'mixed', sourceMode: 'research', approved: true } }];\n"
+      },
+      "id": "f014fdbb-9041-451d-a935-10a6c43c7fe2",
+      "name": "V3: Parse Research Enrichment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const article = $input.first().json;\nlet imageUrl = article.imageUrl || null;\nfunction absolutize(url, base) {\n  if (!url) return null;\n  if (url.startsWith('http')) return url;\n  if (url.startsWith('//')) return 'https:' + url;\n  try { return new URL(url, base).href; } catch { return null; }\n}\nimageUrl = absolutize(imageUrl, article.link);\nreturn [{ json: { ...article, imageUrl, needsOgFetch: !imageUrl } }];\n"
+      },
+      "id": "fafb141a-a11a-4e9e-a872-2dd5896871a3",
+      "name": "V3: Extract Image from RSS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $input.first().json; return [{ json: { ...j, publishMode: j.priority === 'breaking' || j.breaking ? 'instant_priority' : 'scheduled' } }];"
+      },
+      "id": "f728acbf-d1ae-40e6-82b5-7f0449edf0de",
+      "name": "V3: Breaking Priority Flag",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5cb932eb-dcd3-40ce-b4d9-ab9a0e8e894a",
+              "leftValue": "={{ $json.needsOgFetch }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a8fa311b-619a-496c-9235-92efcfcd55b7",
+      "name": "V3: Needs OG Fetch?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1840,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 5
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "9fef1346-74ec-4036-8e38-3b311ef28da4",
+      "name": "V3: Fetch Article Page (OG Fallback)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2064,
+        -336
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "const article = $('V3: Extract Image from RSS').first().json;\nconst html = $input.first().json.data || $input.first().json.body || '';\nfunction pick(re) { const m = html.match(re); return m ? m[1].trim() : null; }\nlet imageUrl = article.imageUrl;\nif (!imageUrl) {\n  imageUrl = pick(/property=[\\\"']og:image[\\\"'][^>]*content=[\\\"']([^\\\"']+)[\\\"']/i)\n    || pick(/name=[\\\"']twitter:image[\\\"'][^>]*content=[\\\"']([^\\\"']+)[\\\"']/i);\n}\nfunction absolutize(url, base) {\n  if (!url) return null;\n  if (url.startsWith('http')) return url;\n  if (url.startsWith('//')) return 'https:' + url;\n  try { return new URL(url, base).href; } catch { return null; }\n}\nimageUrl = absolutize(imageUrl, article.link);\nreturn [{ json: { ...article, imageUrl: imageUrl || null, hasImage: !!imageUrl } }];\n"
+      },
+      "id": "42fb8af1-0f2d-4a07-8322-600e638c3a70",
+      "name": "V3: Parse OG & Twitter Image Tags",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        -336
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const article = $('V3: Extract Image from RSS').first().json;\nreturn [{ json: { ...article, hasImage: !!article.imageUrl } }];\n"
+      },
+      "id": "e6319e5b-cd91-4fe0-a9bd-6760ec204b90",
+      "name": "V3: Skip OG (RSS Image OK)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const direct = $('V3: Extract Image from RSS').first().json;\nconst og = $input.first()?.json;\nif (og?.imageUrl) return [{ json: { ...direct, ...og, hasImage: true } }];\nreturn [{ json: { ...direct, hasImage: !!direct.imageUrl } }];\n"
+      },
+      "id": "8ebdfce4-fae8-41ab-9dfc-41e8725eeb48",
+      "name": "V3: Merge Image Pipeline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2512,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write Telegram post for 'The Social News'.\nPlain text ONLY. No markdown. No **.\nHuman journalistic tone.\nAudience segment: {{ $json.audienceSegment }}\nIf breaking, lead with urgency (no hype).\n\nStructure: hook → what happened → why it matters → 3 • takeaways → question → hashtags.\nMax 900 chars. No URL.\n\nTitle: {{ $json.title }}\nSummary: {{ $json.summary }}\nSource: {{ $json.source }}\nSentiment: {{ $json.enrichment.sentiment }}\nKey quote: {{ $json.enrichment.keyQuote }}",
+        "batching": {}
+      },
+      "id": "7e0bd343-4ab0-4829-ae61-a319290feec2",
+      "name": "V3: Gemini AI Writer (Telegram)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2736,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-pro-preview",
+        "options": {}
+      },
+      "id": "eccd5697-8001-4b10-ae53-9eae530ccea4",
+      "name": "V3: Gemini Model (Telegram Writer)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2816,
+        -16
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "eRM7OdntFXxSwBy9",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nlet text = resp.text || resp.output || '';\nif (resp.candidates?.[0]?.content?.parts?.[0]?.text) text = resp.candidates[0].content.parts[0].text;\nconst article = $('V3: Merge Image Pipeline').first().json;\n\nfunction clean(t) {\n  return String(t)\n    .replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/\\*(.*?)\\*/g, '$1')\n    .replace(/__(.*?)__/g, '$1').replace(/_(.*?)_/g, '$1')\n    .replace(/^#+\\s*/gm, '').replace(/^\\s*[-*]\\s+/gm, '• ')\n    .replace(/\\[([^\\]]+)\\]\\(([^)]+)\\)/g, '$1: $2').replace(/\\n{3,}/g, '\\n\\n').trim();\n}\n\nconst telegramPostText = clean(text);\nconst linkLine = article.link ? `\\n\\nRead more: ${article.link}` : '';\nconst caption = (telegramPostText + linkLine).slice(0, 1024);\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.postedUrls) staticData.postedUrls = [];\nif (!staticData.postedTitles) staticData.postedTitles = [];\nif (!staticData.analytics) staticData.analytics = [];\nif (article.link && !staticData.postedUrls.includes(article.link)) {\n  staticData.postedUrls.push(article.link);\n  if (staticData.postedUrls.length > 300) staticData.postedUrls = staticData.postedUrls.slice(-300);\n}\nif (article.title && !staticData.postedTitles.includes(article.title)) {\n  staticData.postedTitles.push(article.title);\n  if (staticData.postedTitles.length > 300) staticData.postedTitles = staticData.postedTitles.slice(-300);\n}\n\nreturn [{ json: { ...article, telegramPostText: caption, hasImage: !!article.imageUrl } }];\n"
+      },
+      "id": "f55ec78b-6863-493f-bccb-d230b2165735",
+      "name": "V3: Clean Text & Telegram Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3088,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create repurposed assets. Return ONLY JSON:\n{\"twitterThread\":[\"tweet1\",\"tweet2\",\"tweet3\"],\"discordEmbed\":\"short markdown-free summary under 500 chars\",\"newsletterBlurb\":\"2 sentences\",\"pollQuestion\":\"one question\"}\n\nBased on:\n{{ $json.telegramPostText }}",
+        "batching": {}
+      },
+      "id": "1bad56d0-51a7-46f7-8661-0cd6da3e7904",
+      "name": "V3: Repurpose Engine",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        3312,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d7ef4220-92d0-475c-84d4-e4e9d3f64c9f",
+      "name": "V3: Gemini Model (Repurpose)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        3392,
+        -16
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "eRM7OdntFXxSwBy9",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nlet raw = resp.text || resp.output || '';\nif (resp.candidates?.[0]?.content?.parts?.[0]?.text) raw = resp.candidates[0].content.parts[0].text;\nlet pack = { twitterThread: [], discordEmbed: '', newsletterBlurb: '', pollQuestion: '' };\ntry { const m = raw.match(/\\{[\\s\\S]*\\}/); if (m) pack = { ...pack, ...JSON.parse(m[0]) }; } catch (e) {}\n\nconst base = $('V3: Clean Text & Telegram Payload').first().json;\nreturn [{ json: { ...base, repurposing: pack } }];\n"
+      },
+      "id": "2371fe6e-15a8-4a8a-b74b-52eac37db48a",
+      "name": "V3: Parse Repurpose Pack",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3664,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $('V3: Parse Repurpose Pack').first().json;\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.analytics) staticData.analytics = [];\nconst entry = {\n  at: new Date().toISOString(),\n  title: j.title,\n  link: j.link,\n  source: j.source,\n  sourceMode: j.sourceMode || 'rss',\n  priority: j.priority || 'scheduled',\n  audienceSegment: j.audienceSegment,\n  score: j.totalScore || j.scores?.total,\n  sentiment: j.enrichment?.sentiment,\n  postedTo: 'telegram',\n  repurposing: !!j.repurposing\n};\nstaticData.analytics.push(entry);\nif (staticData.analytics.length > 500) staticData.analytics = staticData.analytics.slice(-500);\nreturn [{ json: { ...j, analyticsEntry: entry, status: 'ready_to_publish' } }];\n"
+      },
+      "id": "14a49f32-3e05-4872-b63a-ce1d135500d2",
+      "name": "V3: Analytics Collector",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3888,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1ab86515-d528-4d88-9eb6-d4bd6869a44b",
+              "leftValue": "={{ $json.hasImage }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1526669-fb0a-4937-91b8-385e3c7a59af",
+      "name": "V3: Has Image?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4112,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.imageUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "id": "814d52e5-76e4-4fcf-bee7-f8a1bef1de8c",
+      "name": "V3: Download Article Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4336,
+        -336
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "@BRONXOSOCIAL",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ $('V3: Analytics Collector').item.json.telegramPostText }}"
+        }
+      },
+      "id": "b2c57862-55eb-4faf-a3a0-4d45332a9184",
+      "name": "V3: Telegram Send Photo + Caption",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4560,
+        -336
+      ],
+      "webhookId": "fad2bda3-4fb4-4697-ac4e-c0c703d4cc9e",
+      "credentials": {
+        "telegramApi": {
+          "id": "k9FfiFF97HzSzYZO",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "@BRONXOSOCIAL",
+        "text": "={{ $('V3: Analytics Collector').item.json.telegramPostText }}",
+        "additionalFields": {}
+      },
+      "id": "ebd91d12-28dd-4602-aee6-b3c22d207c45",
+      "name": "V3: Telegram Send Text Fallback",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4560,
+        -144
+      ],
+      "webhookId": "96f864c3-c2b9-4916-8cf9-9550c1ec26d5",
+      "credentials": {
+        "telegramApi": {
+          "id": "0NSuQl8wJYCRmuzg",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "YOUR_DISCORD_WEBHOOK_URL",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "01daf721-0c35-42ae-9013-c752652a354e",
+      "name": "V3: Discord Webhook (Optional)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4784,
+        -240
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "updates": [
+          "channel_post",
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "00b97ce5-36da-42d7-8478-71bd4dc0ddf8",
+      "name": "V3: LinkedIn Bot Listener",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3040,
+        1008
+      ],
+      "webhookId": "9204d469-f81f-4231-bf90-5c8950342666",
+      "credentials": {
+        "telegramApi": {
+          "id": "0NSuQl8wJYCRmuzg",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "14acd930-c062-439c-833d-4628dcd97b83",
+      "name": "V3: 10s Post-Publish Delay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2816,
+        1008
+      ],
+      "webhookId": "e1cb0d9b-3541-48f4-a60f-a8fcd020a1d9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst message = item.channel_post || item.message || {};\nconst text = message.text || message.caption || '';\nlet imageFileId = null;\nif (message.photo?.length) imageFileId = message.photo[message.photo.length - 1].file_id;\nreturn [{ json: { telegramMessageText: text, originalMessageId: message.message_id, imageFileId, hasTelegramPhoto: !!imageFileId } }];\n"
+      },
+      "id": "7069601c-d8ba-473e-aa75-fda96a50090b",
+      "name": "V3: LinkedIn Scrape Channel Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2592,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ghostwrite LinkedIn for K1NG BRONXO. Plain text, no markdown.\nLeadership tone, line breaks, takeaways, question, hashtags. Max 1200 chars. No signature.\n\nSource:\n{{ $json.telegramMessageText }}",
+        "batching": {}
+      },
+      "id": "1876422c-c807-47b3-9114-910a8864bf26",
+      "name": "V3: Gemini AI Writer (LinkedIn)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -2368,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-flash-lite-latest",
+        "options": {}
+      },
+      "id": "8068f116-b025-4d2f-90de-301d2d39d0ed",
+      "name": "V3: Gemini Model (LinkedIn Writer)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -2288,
+        1232
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "eRM7OdntFXxSwBy9",
+          "name": "Google Gemini(PaLM) Api account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nlet text = resp.text || resp.output || '';\nif (resp.candidates?.[0]?.content?.parts?.[0]?.text) text = resp.candidates[0].content.parts[0].text;\nconst prev = $('V3: LinkedIn Scrape Channel Message').first().json;\nfunction clean(t) {\n  return String(t).replace(/\\*\\*(.*?)\\*\\*/g, '$1').replace(/\\*(.*?)\\*/g, '$1')\n    .replace(/__(.*?)__/g, '$1').replace(/^#+\\s*/gm, '').replace(/\\[([^\\]]+)\\]\\(([^)]+)\\)/g, '$1').trim();\n}\nconst linkedinPostText = clean(text).trim() + '\\n\\n— K1NG BRONXO';\nreturn [{ json: { ...prev, linkedinPostText, title: (clean(text).split('\\n')[0] || 'Tech Update').slice(0,120) } }];\n"
+      },
+      "id": "258f532b-6b42-4bfd-aec8-a15ac570c3a5",
+      "name": "V3: LinkedIn Clean Text & Signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2016,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4fda7f10-d369-467e-980e-d5c46eae3a38",
+              "leftValue": "={{ $json.hasTelegramPhoto }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "38d40886-c074-4721-9ff0-3e15581e11e0",
+      "name": "V3: LinkedIn Has Photo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1792,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('V3: LinkedIn Scrape Channel Message').item.json.imageFileId }}",
+        "additionalFields": {}
+      },
+      "id": "b41183a5-6695-41fa-b8e2-758877d26ac9",
+      "name": "V3: Download Telegram Photo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1344,
+        912
+      ],
+      "webhookId": "47866cc7-aa5b-434d-8474-5956a481ceb6",
+      "credentials": {
+        "telegramApi": {
+          "id": "0NSuQl8wJYCRmuzg",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "YOUR_LINKEDIN_PERSON_URN",
+        "text": "={{ $('V3: LinkedIn Clean Text & Signature').item.json.linkedinPostText }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {
+          "title": "={{ $('V3: LinkedIn Clean Text & Signature').item.json.title }}",
+          "visibility": "PUBLIC"
+        }
+      },
+      "id": "39e03357-0c30-4679-bb79-acaa75a79992",
+      "name": "V3: LinkedIn Post with Image",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        912
+      ],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "wq1buMsgysFcmMQ2",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "YOUR_LINKEDIN_PERSON_URN",
+        "text": "={{ $json.linkedinPostText }}",
+        "additionalFields": {
+          "visibility": "PUBLIC"
+        }
+      },
+      "id": "e0476e9c-25e6-4d04-94a2-1d291732a221",
+      "name": "V3: LinkedIn Post Text Only",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        1104
+      ],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "wq1buMsgysFcmMQ2",
+          "name": "LinkedIn account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (Every 3 hrs)": {
+      "main": [
+        [
+          {
+            "node": "Fetch HackerNews RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch TechCrunch AI RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch TheHackersNews RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch MIT Tech Review RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Ars Technica RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch VentureBeat AI RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch The Verge RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch OpenAI Blog RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Wired RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch HackerNews RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch TechCrunch AI RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Fetch TheHackersNews RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Fetch MIT Tech Review RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Fetch Ars Technica RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Fetch VentureBeat AI RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Fetch The Verge RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Fetch OpenAI Blog RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Fetch Wired RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 8
+          }
+        ]
+      ]
+    },
+    "Merge RSS Feeds": {
+      "main": [
+        [
+          {
+            "node": "V3: Smart Filter Score & Rank",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Smart Filter Score & Rank": {
+      "main": [
+        [
+          {
+            "node": "V3: Any Article Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Any Article Found?": {
+      "main": [
+        [
+          {
+            "node": "V3: Sync Candidate Envelope",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V3: Fetch Live Research (HN Algolia)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Sync Candidate Envelope": {
+      "main": [
+        [
+          {
+            "node": "V3: AI Story Worthiness Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini Model (AI Gate)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "V3: AI Story Worthiness Gate",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: AI Story Worthiness Gate": {
+      "main": [
+        [
+          {
+            "node": "V3: Parse AI Gate Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Parse AI Gate Response": {
+      "main": [
+        [
+          {
+            "node": "V3: Worth Posting?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Worth Posting?": {
+      "main": [
+        [
+          {
+            "node": "V3: Content Enrichment Engine",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V3: Fallback Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Fallback Router": {
+      "main": [
+        [
+          {
+            "node": "V3: Fallback Action?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Fallback Action?": {
+      "main": [
+        [
+          {
+            "node": "V3: Sync Candidate Envelope",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V3: Fetch Live Research (HN Algolia)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Fetch Live Research (HN Algolia)": {
+      "main": [
+        [
+          {
+            "node": "V3: Format Research Corpus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Format Research Corpus": {
+      "main": [
+        [
+          {
+            "node": "V3: AI Research Curator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini Model (Research)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "V3: AI Research Curator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: AI Research Curator": {
+      "main": [
+        [
+          {
+            "node": "V3: Parse Research Pick",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Parse Research Pick": {
+      "main": [
+        [
+          {
+            "node": "V3: Research Found Story?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Research Found Story?": {
+      "main": [
+        [
+          {
+            "node": "V3: Research Enrichment Engine",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V3: Log Research Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini Model (Enrichment)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "V3: Content Enrichment Engine",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Content Enrichment Engine": {
+      "main": [
+        [
+          {
+            "node": "V3: Parse Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini Model (Research Enrich)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "V3: Research Enrichment Engine",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Research Enrichment Engine": {
+      "main": [
+        [
+          {
+            "node": "V3: Parse Research Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Parse Enrichment": {
+      "main": [
+        [
+          {
+            "node": "V3: Extract Image from RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Parse Research Enrichment": {
+      "main": [
+        [
+          {
+            "node": "V3: Extract Image from RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Extract Image from RSS": {
+      "main": [
+        [
+          {
+            "node": "V3: Breaking Priority Flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Breaking Priority Flag": {
+      "main": [
+        [
+          {
+            "node": "V3: Needs OG Fetch?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Needs OG Fetch?": {
+      "main": [
+        [
+          {
+            "node": "V3: Fetch Article Page (OG Fallback)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V3: Skip OG (RSS Image OK)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Fetch Article Page (OG Fallback)": {
+      "main": [
+        [
+          {
+            "node": "V3: Parse OG & Twitter Image Tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Parse OG & Twitter Image Tags": {
+      "main": [
+        [
+          {
+            "node": "V3: Merge Image Pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Skip OG (RSS Image OK)": {
+      "main": [
+        [
+          {
+            "node": "V3: Merge Image Pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Merge Image Pipeline": {
+      "main": [
+        [
+          {
+            "node": "V3: Gemini AI Writer (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini Model (Telegram Writer)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "V3: Gemini AI Writer (Telegram)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini AI Writer (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "V3: Clean Text & Telegram Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Clean Text & Telegram Payload": {
+      "main": [
+        [
+          {
+            "node": "V3: Repurpose Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini Model (Repurpose)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "V3: Repurpose Engine",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Repurpose Engine": {
+      "main": [
+        [
+          {
+            "node": "V3: Parse Repurpose Pack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Parse Repurpose Pack": {
+      "main": [
+        [
+          {
+            "node": "V3: Analytics Collector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Analytics Collector": {
+      "main": [
+        [
+          {
+            "node": "V3: Has Image?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Has Image?": {
+      "main": [
+        [
+          {
+            "node": "V3: Download Article Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V3: Telegram Send Text Fallback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Download Article Image": {
+      "main": [
+        [
+          {
+            "node": "V3: Telegram Send Photo + Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Telegram Send Photo + Caption": {
+      "main": [
+        [
+          {
+            "node": "V3: Discord Webhook (Optional)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Telegram Send Text Fallback": {
+      "main": [
+        [
+          {
+            "node": "V3: Discord Webhook (Optional)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: LinkedIn Bot Listener": {
+      "main": [
+        [
+          {
+            "node": "V3: 10s Post-Publish Delay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: 10s Post-Publish Delay": {
+      "main": [
+        [
+          {
+            "node": "V3: LinkedIn Scrape Channel Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: LinkedIn Scrape Channel Message": {
+      "main": [
+        [
+          {
+            "node": "V3: Gemini AI Writer (LinkedIn)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini Model (LinkedIn Writer)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "V3: Gemini AI Writer (LinkedIn)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Gemini AI Writer (LinkedIn)": {
+      "main": [
+        [
+          {
+            "node": "V3: LinkedIn Clean Text & Signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: LinkedIn Clean Text & Signature": {
+      "main": [
+        [
+          {
+            "node": "V3: LinkedIn Has Photo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: LinkedIn Has Photo?": {
+      "main": [
+        [
+          {
+            "node": "V3: Download Telegram Photo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "V3: LinkedIn Post Text Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "V3: Download Telegram Photo": {
+      "main": [
+        [
+          {
+            "node": "V3: LinkedIn Post with Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "a9901b5f-57a3-4aeb-9543-89468f573631",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7576c99483e4a6bcab9aea6919dffa11ffb974f555a4aafe5f72b29a2133014a"
+  },
+  "nodeGroups": [],
+  "id": "G4iafMG06EBEofP4",
+  "tags": [
+    {
+      "updatedAt": "2026-07-24T17:30:35.445Z",
+      "createdAt": "2026-07-24T17:30:35.445Z",
+      "id": "38juW3wi1RX1gIBY",
+      "name": "ai-news"
+    },
+    {
+      "updatedAt": "2026-07-24T17:30:35.380Z",
+      "createdAt": "2026-07-24T17:30:35.380Z",
+      "id": "k9rzwu2aHTiV398j",
+      "name": "linkedin"
+    },
+    {
+      "updatedAt": "2026-07-24T18:16:21.361Z",
+      "createdAt": "2026-07-24T18:16:21.361Z",
+      "id": "n7tjPgKOlSVrxjY0",
+      "name": "research-fallback"
+    },
+    {
+      "updatedAt": "2026-07-24T17:30:35.351Z",
+      "createdAt": "2026-07-24T17:30:35.351Z",
+      "id": "o1mOflftsGJjw27F",
+      "name": "telegram"
+    },
+    {
+      "updatedAt": "2026-07-24T18:16:21.921Z",
+      "createdAt": "2026-07-24T18:16:21.921Z",
+      "id": "od7H1AAe5U1iDiR1",
+      "name": "v3"
+    }
+  ]
+}
